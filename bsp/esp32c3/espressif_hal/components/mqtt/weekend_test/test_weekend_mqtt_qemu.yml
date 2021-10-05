@@ -1,0 +1,6 @@
+CaseConfig:
+- name: test_weekend_mqtt_publish
+  overwrite:
+    dut:
+      class: ESP32QEMUDUT
+      package: ttfw_idf

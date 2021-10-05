@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2021 Espressif Systems (Shanghai) Co., Ltd.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#define CONFIG_IDF_TARGET_ESP32C3 1
+#define CONFIG_IDF_FIRMWARE_CHIP_ID 0x0005
+#define CONFIG_LOG_TIMESTAMP_SOURCE_RTOS 1
+#define CONFIG_BOOTLOADER_LOG_LEVEL 3
+
+#define CONFIG_BT_CTRL_ESP32C3 1
+#define CONFIG_BT_SOC_SUPPORT_5_0 1
+#define BTDM_CTRL_HCI_MODE_VHCI 1
+#define CONFIG_ESP32_PHY_MAX_TX_POWER 20
