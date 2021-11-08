@@ -22,6 +22,8 @@ NVIC_INT_CTRL   EQU     0xE000ED04               ; interrupt control state regis
 NVIC_SYSPRI2    EQU     0xE000ED20               ; system priority register (2)
 NVIC_PENDSV_PRI EQU     0xFFFF0000               ; PendSV and SysTick priority value (lowest)
 NVIC_PENDSVSET  EQU     0x10000000               ; value to trigger PendSV exception
+MPU_CTRL	    EQU     0xE000ED94               ; mpu control register
+MPU_RBAR	    EQU     0xE000ED9C               ; mpu region base address register
 
     AREA |.text|, CODE, READONLY, ALIGN=2
     THUMB
@@ -127,9 +129,12 @@ PendSV_Handler   PROC
     STR     r1, [r0]                ; update from thread stack pointer
 
 switch_to_thread
+	IMPORT  rt_mpu_table_switch
+	IMPORT  rt_current_thread
+
     LDR     r1, =rt_interrupt_to_thread
     LDR     r1, [r1]
-    LDR     r1, [r1]                ; load thread stack pointer
+	LDR     r1, [r1]                ; load thread stack pointer
 
     IF      {FPU} != "SoftVFP"
     LDMFD   r1!, {r3}               ; pop flag
@@ -149,6 +154,12 @@ switch_to_thread
     CMP     r3,  #0                 ; if(flag_r3 != 0)
     BICNE   lr, lr, #0x10           ; lr &= ~(1 << 4), set FPCA.
     ENDIF
+
+    PUSH    {r0-r3, r12, lr}
+    LDR     r1, =rt_current_thread
+    LDR     r0, [r1]
+    BL      rt_mpu_table_switch     ; switch mpu table 
+    POP     {r0-r3, r12, lr}
 
 pendsv_exit
     ; restore interrupt

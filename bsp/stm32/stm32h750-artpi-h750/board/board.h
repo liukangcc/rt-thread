@@ -65,6 +65,11 @@ extern "C" {
  *                 such as     #define BSP_UART1_RX_USING_DMA
  *
  */
+extern int Image$$ER_IROM1$$Base;
+extern int Image$$ER_IROM1$$Limit;
+#define RT_ROM_BEGIN   (&Image$$ER_IROM1$$Base)
+#define RT_ROM_END     (&Image$$ER_IROM1$$Limit)
+
 #define STM32_FLASH_START_ADRESS       ROM_START
 #define STM32_FLASH_SIZE               ROM_SIZE
 #define STM32_FLASH_END_ADDRESS        ROM_END

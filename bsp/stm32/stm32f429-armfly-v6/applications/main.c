@@ -13,6 +13,12 @@
 #include <board.h>
 #include <drv_ext_io.h>
 
+int rt_mpu_table_refresh()
+{
+    return 0;
+
+}
+
 int main(void)
 {
     HC574_SetPin(LED1,0);

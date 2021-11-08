@@ -666,7 +666,6 @@ RTM_EXPORT(rt_thread_delay_until);
 rt_err_t rt_thread_mdelay(rt_int32_t ms)
 {
     rt_tick_t tick;
-
     tick = rt_tick_from_millisecond(ms);
 
     return rt_thread_sleep(tick);
@@ -811,7 +810,7 @@ rt_err_t rt_thread_suspend(rt_thread_t thread)
 {
     register rt_base_t stat;
     register rt_base_t temp;
-
+    
     /* thread check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);

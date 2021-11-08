@@ -48,6 +48,9 @@
 extern "C" {
 #endif
 
+#ifdef RT_USING_MPU
+#include <mpu_inf.h>
+#endif
 /**
  * @addtogroup BasicDef
  */
@@ -487,6 +490,10 @@ struct rt_object_information
 #define RT_TIMER_SKIP_LIST_MASK         0x3
 #endif
 
+#ifdef RT_USING_MPU
+#define RT_MPU_DISABLE                  (HWREG32(0xE000ED94) &= ~1) /* disable mpu */
+#define RT_MPU_ENDABLE                  (HWREG32(0xE000ED94) |= 1) /* disable mpu */
+#endif
 /**
  * timer structure
  */
@@ -674,6 +681,11 @@ struct rt_thread
     /* light weight process if present */
 #ifdef RT_USING_LWP
     void        *lwp;
+#endif
+    
+    /* memory protect unit if present */
+#ifdef RT_USING_MPU
+    rt_mpu_tables setting;                            /**< mpu tables setting */
 #endif
 
     rt_ubase_t user_data;                             /**< private user data beyond this thread */

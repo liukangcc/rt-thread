@@ -127,9 +127,14 @@ PendSV_Handler   PROC
     STR     r1, [r0]                ; update from thread stack pointer
 
 switch_to_thread
+	IMPORT  rt_mpu_table_refresh
     LDR     r1, =rt_interrupt_to_thread
     LDR     r1, [r1]
     LDR     r1, [r1]                ; load thread stack pointer
+	
+	PUSH    {lr}
+    BL      rt_mpu_table_refresh
+    POP     {lr}             ; load thread stack pointer
 
     IF      {FPU} != "SoftVFP"
     LDMFD   r1!, {r3}               ; pop flag

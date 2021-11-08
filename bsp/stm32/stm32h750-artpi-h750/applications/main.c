@@ -12,24 +12,47 @@
 #include <rtdevice.h>
 #include <board.h>
 
+#ifdef RT_USING_MPU
+#include <mpu.h>
+#endif
+
 /* defined the LED0 pin: PI8 */
 #define LED0_PIN    GET_PIN(I, 8)
+#define THREAD_PRIORITY         25
+#define THREAD_STACK_SIZE       1024
+#define THREAD_TIMESLICE        5
 
 #ifdef RT_USING_WIFI
     extern void wlan_autoconnect_init(void);
 #endif
 
+extern rt_err_t rt_thread_mpu_attach(rt_thread_t thread, rt_uint8_t* addr, size_t size, rt_uint32_t attribute);
+
+static void thread1_entry(void *param)
+{
+   int temp = 0;
+   while (1)
+   {
+       rt_thread_mdelay(1000);
+   }
+}
+
+#define THREAD_MEMORY_SIZE 1024
+uint8_t thread_stack[THREAD_MEMORY_SIZE] __attribute__((aligned(THREAD_MEMORY_SIZE)));
+
 int main(void)
 {
+    struct rt_thread tid;
+    rt_thread_t tid2 = RT_NULL;
     /* set LED0 pin mode to output */
     rt_pin_mode(LED0_PIN, PIN_MODE_OUTPUT);
-    #ifdef RT_USING_WIFI
-    /* init Wi-Fi auto connect feature */
-    wlan_autoconnect_init();
-    /* enable auto reconnect on WLAN device */
-    rt_wlan_config_autoreconnect(RT_TRUE);
-    #endif
-
+    
+    rt_thread_init(&tid, "mpu", thread1_entry, RT_NULL, thread_stack, THREAD_MEMORY_SIZE, THREAD_PRIORITY, 20);
+    {
+        rt_thread_mpu_attach(&tid, thread_stack, THREAD_MEMORY_SIZE, 0);
+        rt_thread_startup(&tid);
+    }
+ 
     while (1)
     {
         rt_pin_write(LED0_PIN, PIN_HIGH);
